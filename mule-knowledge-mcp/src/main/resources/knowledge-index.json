@@ -1,0 +1,34 @@
+{
+  "documents": [
+    {
+      "id": "competitive-positioning",
+      "title": "Competitive positioning",
+      "path": "knowledge/competitive-positioning.md",
+      "body": "# Competitive positioning\n\nUse these talking points; do not disparage named competitors.\n\n## Versus generic iPaaS\n\nNorthstar Cloud is sold as an agent-ready automation layer. Lead with Agent Fabric and Agentforce connectivity, not connector count.\n\n## Proof points\n\n- Native A2A and MCP registration so Agentforce can call internal knowledge without a custom Apex callout per use case.\n- Enterprise SKU required when the customer needs SSO, audit logs, or a sandbox.\n- Discount only through Deal Desk; never match a competitor quote on the first call.\n\n## Landmines\n\nDo not discuss unannounced roadmap. If asked about on-prem runtime, say it is available only on Enterprise with a services engagement, then offer a solution architect.\n"
+    },
+    {
+      "id": "discount-policy",
+      "title": "Discount and deal desk policy",
+      "path": "knowledge/discount-policy.md",
+      "body": "# Discount and deal desk policy\n\nStandard list pricing applies unless a discount is approved.\n\n## Standard discounts\n\n- Up to 10% for annual prepay on Professional edition.\n- Up to 15% for multi-year (36-month) Enterprise agreements.\n- Partner-sourced deals may add 5% partner margin, not stacked above 20% total off list.\n\n## Deal desk\n\nDiscounts above 15% require Deal Desk approval. Submit the opportunity ID, competitive threat, and estimated close date in Salesforce. Deal Desk SLA is two business days.\n\nNever quote a discount that is not recorded on the opportunity. Agentforce should summarize the policy and tell the seller to open a Deal Desk case for exceptions.\n"
+    },
+    {
+      "id": "product-catalog",
+      "title": "Product catalog",
+      "path": "knowledge/product-catalog.md",
+      "body": "# Product catalog\n\nInternal catalog used by sales and support. Prices are list USD per user per month, billed annually unless noted.\n\n## Northstar Cloud Professional\n\n- SKU: NST-PRO\n- List: $80\n- Includes workflow automation, standard connectors, and 50,000 automation runs per month.\n- Best for mid-market teams that need Salesforce and ERP sync.\n\n## Northstar Cloud Enterprise\n\n- SKU: NST-ENT\n- List: $140\n- Includes Professional features plus SSO, audit logs, sandbox, and unlimited automation runs.\n- Required for customers with more than 500 employees or regulated data.\n\n## Add-ons\n\n- Knowledge Pack (SKU: NST-KNOW): $15. Adds managed knowledge search for Agentforce.\n- Premium Support (SKU: NST-SUP): $8. 24x7 phone plus 1-hour P1 response.\n"
+    },
+    {
+      "id": "return-policy",
+      "title": "Returns and cancellation policy",
+      "path": "knowledge/return-policy.md",
+      "body": "# Returns and cancellation policy\n\nCustomers may cancel unused annual subscriptions within 30 days of the order start date for a prorated refund. After 30 days, unused months are forfeited unless the contract includes a termination-for-convenience clause.\n\nImplementation services are non-refundable once delivery has started.\n\nHardware kits (rare) must be returned unused within 14 days with RMA number from Support.\n\nSeller talking point: do not promise refunds beyond this policy. Escalate legal exceptions to RevOps.\n"
+    },
+    {
+      "id": "support-sla",
+      "title": "Support SLA",
+      "path": "knowledge/support-sla.md",
+      "body": "# Support SLA\n\nSeverity is assigned by Support, not by the customer\u2019s requested priority.\n\n## Response targets\n\n- P1 (production outage): 1 hour, 24x7 for Premium Support SKUs; 4 hours business hours otherwise.\n- P2 (major feature degraded): 4 business hours.\n- P3 (workaround available): 1 business day.\n- P4 (how-to / knowledge): 2 business days; prefer Agentforce plus this knowledge agent.\n\n## Case routing\n\nCases tagged `agentforce` or `knowledge-gap` should cite the knowledge article ID. If no article matches, Support files a knowledge gap in the internal wiki.\n"
+    }
+  ]
+}

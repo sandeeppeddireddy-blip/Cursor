@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:mcp="http://www.mulesoft.org/schema/mule/mcp"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/mcp http://www.mulesoft.org/schema/mule/mcp/current/mule-mcp.xsd">
+
+  <configuration-properties file="config.properties" doc:name="Configuration properties"/>
+
+  <!--
+    CloudHub 2.0 / Runtime Fabric: set mule.http.service.implementation=NETTY
+    on the deployment so Streamable HTTP MCP works.
+  -->
+  <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config">
+    <http:listener-connection host="0.0.0.0" port="${http.port}"/>
+  </http:listener-config>
+
+  <mcp:server-config name="Knowledge_MCP_Server"
+                     doc:name="Knowledge MCP Server"
+                     serverName="${mcp.server.name}"
+                     serverVersion="${mcp.server.version}">
+    <mcp:streamable-http-server-connection
+        listenerConfig="HTTP_Listener_config"
+        mcpEndpointPath="${mcp.endpoint.path}"/>
+  </mcp:server-config>
+
+  <flow name="healthFlow" doc:name="healthFlow">
+    <http:listener config-ref="HTTP_Listener_config" path="/health" doc:name="GET /health"/>
+    <ee:transform doc:name="Health payload">
+      <ee:message>
+        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  ok: true,
+  name: p('mcp.server.name'),
+  version: p('mcp.server.version'),
+  mcp: p('mcp.endpoint.path')
+}]]></ee:set-payload>
+      </ee:message>
+    </ee:transform>
+  </flow>
+
+  <flow name="searchKnowledgeFlow" doc:name="searchKnowledgeFlow">
+    <mcp:tool-listener config-ref="Knowledge_MCP_Server" name="search_knowledge">
+      <mcp:description>Search the internal knowledge corpus. Use before answering product, policy, pricing, support, or competitive questions.</mcp:description>
+      <mcp:parameters-schema><![CDATA[{
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Natural-language search query"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10,
+            "default": 5,
+            "description": "Maximum number of hits to return"
+          }
+        },
+        "required": ["query"]
+      }]]></mcp:parameters-schema>
+      <mcp:responses>
+        <mcp:text-tool-response-content text="#[payload.^raw]"/>
+      </mcp:responses>
+      <mcp:on-error-responses>
+        <mcp:text-tool-response-content text="#['Error searching knowledge: $(error.description)']"/>
+      </mcp:on-error-responses>
+    </mcp:tool-listener>
+
+    <ee:transform doc:name="Search knowledge">
+      <ee:message>
+        <ee:set-payload><![CDATA[%dw 2.0
+import searchKnowledge from modules::Knowledge
+output application/json
+---
+searchKnowledge(
+  (payload.query default "") as String,
+  (payload.limit default 5) as Number
+)]]></ee:set-payload>
+      </ee:message>
+    </ee:transform>
+  </flow>
+
+  <flow name="getKnowledgeDocumentFlow" doc:name="getKnowledgeDocumentFlow">
+    <mcp:tool-listener config-ref="Knowledge_MCP_Server" name="get_knowledge_document">
+      <mcp:description>Load the full text of one internal knowledge article by id (for example product-catalog or discount-policy).</mcp:description>
+      <mcp:parameters-schema><![CDATA[{
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Document id without .md, matching a search_knowledge hit"
+          }
+        },
+        "required": ["id"]
+      }]]></mcp:parameters-schema>
+      <mcp:responses>
+        <mcp:text-tool-response-content text="#[payload.^raw]"/>
+      </mcp:responses>
+      <mcp:on-error-responses>
+        <mcp:text-tool-response-content text="#['Error loading knowledge document: $(error.description)']"/>
+      </mcp:on-error-responses>
+    </mcp:tool-listener>
+
+    <ee:transform doc:name="Get knowledge document">
+      <ee:message>
+        <ee:set-payload><![CDATA[%dw 2.0
+import getDocument from modules::Knowledge
+output application/json
+---
+getDocument((payload.id default "") as String)]]></ee:set-payload>
+      </ee:message>
+    </ee:transform>
+  </flow>
+
+  <flow name="listKnowledgeDocumentsFlow" doc:name="listKnowledgeDocumentsFlow">
+    <mcp:tool-listener config-ref="Knowledge_MCP_Server" name="list_knowledge_documents">
+      <mcp:description>List available internal knowledge article ids and titles.</mcp:description>
+      <mcp:parameters-schema><![CDATA[{
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {},
+        "required": []
+      }]]></mcp:parameters-schema>
+      <mcp:responses>
+        <mcp:text-tool-response-content text="#[payload.^raw]"/>
+      </mcp:responses>
+      <mcp:on-error-responses>
+        <mcp:text-tool-response-content text="#['Error listing knowledge documents: $(error.description)']"/>
+      </mcp:on-error-responses>
+    </mcp:tool-listener>
+
+    <ee:transform doc:name="List knowledge documents">
+      <ee:message>
+        <ee:set-payload><![CDATA[%dw 2.0
+import listDocuments from modules::Knowledge
+output application/json
+---
+listDocuments()]]></ee:set-payload>
+      </ee:message>
+    </ee:transform>
+  </flow>
+
+</mule>

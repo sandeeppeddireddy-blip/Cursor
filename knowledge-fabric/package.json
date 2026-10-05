@@ -1,0 +1,20 @@
+{
+  "name": "knowledge-fabric",
+  "private": true,
+  "type": "module",
+  "description": "agent project: knowledge-fabric",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "dev": "npx @cursor/bdk serve --dir . --mode single --dev",
+    "validate": "npx @cursor/bdk validate --dir .",
+    "info": "npx @cursor/bdk info --dir . --json"
+  },
+  "dependencies": {
+    "@cursor/bdk": "^0.2.18",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "typescript": "6.0.3"
+  }
+}
