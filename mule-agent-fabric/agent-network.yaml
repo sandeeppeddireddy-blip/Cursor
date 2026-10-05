@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: AgentNetwork
+metadata:
+  name: internal-knowledge-network
+spec:
+  context:
+    connections:
+      knowledgeMcp:
+        kind: mcp
+        ref:
+          name: internal-knowledge-mcp
+        url: ${knowledgeMcp.url}
+      knowledgeA2a:
+        kind: a2a
+        ref:
+          name: internal-knowledge-agent
+        url: ${knowledgeA2a.url}
+  brokers:
+    knowledgeBroker:
+      kind: AgentScript
+      implementation: ./brokers/knowledge-broker.agent
+      llm: platform
+      tools:
+        - knowledgeMcp
+      links:
+        - knowledgeA2a
+      interfaces:
+        a2a:
+          card:
+            name: Internal Knowledge Broker
+            description: Routes Agentforce questions to the Cursor internal knowledge agent.
+            url: http://localhost:8081/knowledgeBroker
+            version: 1.0.0
+            protocolVersion: "0.3.0"
+            capabilities:
+              streaming: true
+              pushNotifications: false
+            defaultInputModes:
+              - text/plain
+            defaultOutputModes:
+              - text/plain
+            skills:
+              - id: search-knowledge
+                name: Search internal knowledge
+                description: Retrieve cited answers from internal product and policy articles.
+                tags:
+                  - knowledge
+                  - agentforce

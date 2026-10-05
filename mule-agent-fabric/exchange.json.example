@@ -1,0 +1,30 @@
+{
+  "main": "agent-network.yaml",
+  "name": "internal-knowledge-network",
+  "groupId": "YOUR_ANYPOINT_GROUP_ID",
+  "assetId": "internal-knowledge-network",
+  "version": "1.0.0",
+  "classifier": "evented-api",
+  "apiVersion": "v1",
+  "tags": ["agent-fabric", "agentforce", "knowledge"],
+  "dependencies": [
+    {
+      "groupId": "YOUR_ANYPOINT_GROUP_ID",
+      "assetId": "internal-knowledge-mcp",
+      "version": "1.0.0",
+      "classifier": "mcp"
+    }
+  ],
+  "metadata": {
+    "variables": [
+      {
+        "key": "knowledgeMcp.url",
+        "description": "Public BDK MCP endpoint, e.g. https://<host>/v1/mcp"
+      },
+      {
+        "key": "knowledgeA2a.url",
+        "description": "Public BDK A2A channel base, e.g. https://<host>/v1/channels/a2a/"
+      }
+    ]
+  }
+}
