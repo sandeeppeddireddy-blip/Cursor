@@ -1,8 +1,12 @@
-# Cursor internal knowledge agent
+# Cursor / MuleSoft knowledge fabric
 
-This repository contains a [Bot Development Kit](https://www.npmjs.com/package/@cursor/bdk) agent that searches internal knowledge and exposes MCP and A2A surfaces for **MuleSoft Agent Fabric**. Salesforce **Agentforce** consumes those surfaces through the fabric broker.
+This repository contains two complementary paths for Salesforce **Agentforce**
+to search internal knowledge through **MuleSoft Agent Fabric**:
 
-- Agent project: [`knowledge-fabric/`](knowledge-fabric/README.md)
-- Sample Agent Network spec: [`mule-agent-fabric/`](mule-agent-fabric/README.md)
+1. **Mule MCP app (recommended for Agent Fabric)** — [`mule-knowledge-mcp/`](mule-knowledge-mcp/README.md)  
+   Deployable Anypoint package using MCP Connector. Register `https://<host>/mcp` in Exchange.
 
-Replace `knowledge-fabric/knowledge/*.md` with your real corpus, then register the served MCP or A2A URL in Anypoint Exchange.
+2. **Cursor BDK agent** — [`knowledge-fabric/`](knowledge-fabric/README.md)  
+   Cursor-hosted or self-hosted agent with model reasoning. Self-host if you need a public MCP/A2A URL; Cursor-managed v2 deploy does not yet expose one for Agent Fabric.
+
+Sample Agent Network wiring: [`mule-agent-fabric/`](mule-agent-fabric/README.md).

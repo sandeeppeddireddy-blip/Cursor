@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "classifier": "evented-api",
   "apiVersion": "v1",
-  "tags": ["agent-fabric", "agentforce", "knowledge"],
+  "tags": ["agent-fabric", "agentforce", "knowledge", "mcp"],
   "dependencies": [
     {
       "groupId": "YOUR_ANYPOINT_GROUP_ID",
@@ -19,11 +19,7 @@
     "variables": [
       {
         "key": "knowledgeMcp.url",
-        "description": "Public BDK MCP endpoint, e.g. https://<host>/v1/mcp"
-      },
-      {
-        "key": "knowledgeA2a.url",
-        "description": "Public BDK A2A channel base, e.g. https://<host>/v1/channels/a2a/"
+        "description": "Public Mule MCP endpoint, e.g. https://knowledge-mcp.example.com/mcp"
       }
     ]
   }
