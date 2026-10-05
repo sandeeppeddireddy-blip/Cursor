@@ -1,0 +1,20 @@
+meta {
+  name: 02 List recent sessions
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/internal/agentsdk/deployments/{{slug}}/logs?teamId={{teamId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{cursorApiKey}}
+}
+
+docs {
+  Returns recent sessions. Copy the newest sessionId into the cloud env
+  (sessionId) before calling events/runs.
+}

@@ -1,0 +1,33 @@
+meta {
+  name: 01 Start session
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/internal/agentsdk/deployments/{{slug}}/sessions
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{cursorApiKey}}
+}
+
+headers {
+  content-type: application/json
+  accept: application/json
+}
+
+body:json {
+  {
+    "teamId": {{teamId}},
+    "message": "What is the list price for Northstar Cloud Professional?"
+  }
+}
+
+docs {
+  Starts a hosted architecture-v2 turn. Returns 202 with deliveryId/workflowId.
+  sessionId is often omitted at accept time — use "02 List recent sessions"
+  a few seconds later, then "03 Get session events".
+}

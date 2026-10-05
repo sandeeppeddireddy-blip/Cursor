@@ -1,0 +1,33 @@
+meta {
+  name: 05 Continue session
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/internal/agentsdk/deployments/{{slug}}/sessions
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{cursorApiKey}}
+}
+
+headers {
+  content-type: application/json
+  accept: application/json
+}
+
+body:json {
+  {
+    "teamId": {{teamId}},
+    "sessionId": "{{sessionId}}",
+    "message": "Cite the article id for that price."
+  }
+}
+
+docs {
+  Resumes an existing hosted session (ses_...). sessionId must match
+  HOSTED_SESSION_ID_RE: ses_ + 24 hex chars.
+}
