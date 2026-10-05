@@ -16,12 +16,18 @@ Dashboard: https://cursor.com/dashboard/deployed-agents/knowledge-fabric
 
 ## Import into Bruno
 
-**Option A — collection**
+**Option A — Postman JSON (easiest Import)**
+1. Bruno → **Import Collection**
+2. Choose `knowledge-fabric-cloud.postman_collection.json`
+3. Collection variables → set `cursorApiKey` to your Cursor API key / service account key
+4. Run **01 Start session** → wait a few seconds → **02 List recent sessions** (auto-sets `sessionId`) → **03 Get session events**
+
+**Option B — open Bruno collection folder**
 1. Bruno → Open Collection → `bruno/knowledge-fabric-cloud/`
 2. Select env `cloud`
 3. Set secret `cursorApiKey`
 
-**Option B — paste cURL**
+**Option C — paste cURL**
 Bruno → Import → cURL → paste any request below.
 
 ## 1) Start a turn

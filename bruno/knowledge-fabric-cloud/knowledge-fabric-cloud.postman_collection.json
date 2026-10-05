@@ -1,0 +1,279 @@
+{
+  "info": {
+    "_postman_id": "knowledge-fabric-cloud-001",
+    "name": "knowledge-fabric-cloud",
+    "description": "Cursor-hosted knowledge-fabric agent (architecture v2).\n\nFlow:\n1. Start session\n2. List recent sessions → copy sessionId\n3. Get session events → read message.completed\n4. Optional continue / runs\n\nSet collection variables: cursorApiKey, teamId, slug, sessionId.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.cursor.com"
+    },
+    {
+      "key": "teamId",
+      "value": "33263637"
+    },
+    {
+      "key": "slug",
+      "value": "knowledge-fabric"
+    },
+    {
+      "key": "sessionId",
+      "value": ""
+    },
+    {
+      "key": "cursorApiKey",
+      "value": "",
+      "type": "secret"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Start session",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{cursorApiKey}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"teamId\": {{teamId}},\n  \"message\": \"What is the list price for Northstar Cloud Professional?\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/internal/agentsdk/deployments/{{slug}}/sessions",
+          "host": ["{{baseUrl}}"],
+          "path": ["internal", "agentsdk", "deployments", "{{slug}}", "sessions"]
+        },
+        "description": "Starts a hosted turn. Returns 202 with deliveryId/workflowId. sessionId is often omitted — use request 02 next."
+      },
+      "response": []
+    },
+    {
+      "name": "01b Start session (dryRun)",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{cursorApiKey}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"teamId\": {{teamId}},\n  \"message\": \"What is NST-PRO list price?\",\n  \"dryRun\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/internal/agentsdk/deployments/{{slug}}/sessions",
+          "host": ["{{baseUrl}}"],
+          "path": ["internal", "agentsdk", "deployments", "{{slug}}", "sessions"]
+        },
+        "description": "Dry-run: read tools run, write tools stubbed."
+      },
+      "response": []
+    },
+    {
+      "name": "02 List recent sessions",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const data = pm.response.json();",
+              "const sessions = data.sessions || [];",
+              "if (sessions.length) {",
+              "  const newest = sessions[sessions.length - 1];",
+              "  if (newest.sessionId) {",
+              "    pm.collectionVariables.set('sessionId', newest.sessionId);",
+              "    console.log('Set sessionId to', newest.sessionId);",
+              "  }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{cursorApiKey}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/internal/agentsdk/deployments/{{slug}}/logs?teamId={{teamId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["internal", "agentsdk", "deployments", "{{slug}}", "logs"],
+          "query": [
+            {
+              "key": "teamId",
+              "value": "{{teamId}}"
+            }
+          ]
+        },
+        "description": "Lists recent sessions. Test script auto-sets collection variable sessionId to the newest one."
+      },
+      "response": []
+    },
+    {
+      "name": "03 Get session events",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{cursorApiKey}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/internal/agentsdk/deployments/{{slug}}/sessions/{{sessionId}}/events?teamId={{teamId}}&afterEventIndex=-1",
+          "host": ["{{baseUrl}}"],
+          "path": [
+            "internal",
+            "agentsdk",
+            "deployments",
+            "{{slug}}",
+            "sessions",
+            "{{sessionId}}",
+            "events"
+          ],
+          "query": [
+            {
+              "key": "teamId",
+              "value": "{{teamId}}"
+            },
+            {
+              "key": "afterEventIndex",
+              "value": "-1"
+            }
+          ]
+        },
+        "description": "Poll until message.completed / turn.completed. Assistant text is in the message.completed event data."
+      },
+      "response": []
+    },
+    {
+      "name": "04 Get session runs",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{cursorApiKey}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/internal/agentsdk/deployments/{{slug}}/sessions/{{sessionId}}/runs?teamId={{teamId}}",
+          "host": ["{{baseUrl}}"],
+          "path": [
+            "internal",
+            "agentsdk",
+            "deployments",
+            "{{slug}}",
+            "sessions",
+            "{{sessionId}}",
+            "runs"
+          ],
+          "query": [
+            {
+              "key": "teamId",
+              "value": "{{teamId}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "05 Continue session",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{cursorApiKey}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"teamId\": {{teamId}},\n  \"sessionId\": \"{{sessionId}}\",\n  \"message\": \"Cite the article id for that price.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/internal/agentsdk/deployments/{{slug}}/sessions",
+          "host": ["{{baseUrl}}"],
+          "path": ["internal", "agentsdk", "deployments", "{{slug}}", "sessions"]
+        },
+        "description": "Resume an existing ses_… session."
+      },
+      "response": []
+    }
+  ]
+}
