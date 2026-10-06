@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agentforce ↔ Cursor — Integration Options</title>
+  <style>
+    :root {
+      --navy: #0b1f3a;
+      --ink: #1a1f2b;
+      --muted: #5a6678;
+      --teal: #0e7c86;
+      --teal-soft: #e6f4f5;
+      --light: #f5f7fa;
+      --line: #d5dce5;
+      --amber: #b45309;
+      --green: #1f6b4a;
+      --white: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Calibri, system-ui, sans-serif;
+      background: #0a1524;
+      color: var(--ink);
+    }
+    .deck {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 16px 64px;
+    }
+    .slide {
+      background: var(--light);
+      border-radius: 10px;
+      padding: 40px 48px 48px;
+      margin: 0 0 28px;
+      min-height: 560px;
+      position: relative;
+      overflow: hidden;
+      border-top: 4px solid var(--teal);
+    }
+    .slide.title-slide {
+      display: grid;
+      grid-template-columns: 1.1fr 1.4fr;
+      padding: 0;
+      border-top: none;
+      min-height: 560px;
+    }
+    .title-left {
+      background: var(--navy);
+      padding: 56px 40px;
+      border-right: 6px solid var(--teal);
+    }
+    .title-left .eyebrow {
+      color: var(--teal);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    .title-left h1 {
+      color: #fff;
+      font-size: 34px;
+      line-height: 1.15;
+      margin: 0 0 28px;
+    }
+    .title-left p {
+      color: #a8b8cc;
+      font-size: 14px;
+      margin: 0;
+    }
+    .title-right {
+      padding: 56px 40px;
+      background: var(--light);
+    }
+    .title-right h2 {
+      margin: 0 0 20px;
+      color: var(--navy);
+      font-size: 24px;
+    }
+    .card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+    }
+    .card h3 {
+      margin: 0 0 6px;
+      color: var(--teal);
+      font-size: 16px;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    h1.slide-title {
+      margin: 0 0 28px;
+      font-size: 30px;
+      color: var(--navy);
+    }
+    .eyebrow {
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      margin: -10px 0 18px;
+    }
+    .eyebrow.warn { color: var(--amber); }
+    ul { margin: 0; padding-left: 0; list-style: none; }
+    ul li {
+      position: relative;
+      padding: 8px 0 8px 18px;
+      font-size: 16px;
+      line-height: 1.45;
+      color: var(--ink);
+    }
+    ul li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--teal);
+    }
+    .flow {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+      margin: 0 0 28px;
+      flex-wrap: wrap;
+    }
+    .flow .step {
+      flex: 1 1 140px;
+      background: var(--navy);
+      color: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      min-width: 140px;
+    }
+    .flow .step.last { background: var(--teal); }
+    .flow .step strong { display: block; font-size: 15px; margin-bottom: 4px; }
+    .flow .step span { font-size: 12px; color: #c5d2e0; }
+    .flow .arrow {
+      align-self: center;
+      color: var(--teal);
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .cols.three { grid-template-columns: 1fr 1fr 1fr; }
+    .panel {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .panel .head {
+      padding: 12px 18px;
+      color: #fff;
+      font-weight: 700;
+    }
+    .panel .head.green { background: var(--green); }
+    .panel .head.amber { background: var(--amber); }
+    .panel .body { padding: 8px 18px 16px; }
+    .panel.dark {
+      background: var(--navy);
+      border: none;
+      color: #fff;
+      padding: 24px;
+    }
+    .panel.dark h3 { color: var(--teal); margin-top: 0; }
+    .panel.dark .item { margin: 18px 0; }
+    .panel.dark .item strong { display: block; color: #fff; }
+    .panel.dark .item span { color: #a8b8cc; font-size: 13px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: var(--navy); color: #fff; }
+    tr:nth-child(even) td { background: var(--teal-soft); }
+    td:first-child { font-weight: 700; }
+    .hero {
+      background: var(--teal);
+      color: #fff;
+      border-radius: 8px;
+      padding: 24px 28px;
+      margin-bottom: 20px;
+    }
+    .hero h2 { margin: 0 0 10px; font-size: 26px; }
+    .hero p { margin: 0; color: #e6f4f5; }
+    .quote {
+      background: var(--navy);
+      color: #fff;
+      border-radius: 8px;
+      padding: 22px 26px;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 22px;
+    }
+    .q-row {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--teal);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+    }
+    .q-row strong { display: block; color: var(--navy); margin-bottom: 4px; }
+    .q-row span { color: var(--muted); font-size: 14px; }
+    .steps {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .step-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px 18px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .step-card .n {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--navy); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; flex-shrink: 0;
+    }
+    .footer {
+      position: absolute;
+      left: 48px; right: 48px; bottom: 18px;
+      display: flex; justify-content: space-between;
+      color: var(--muted); font-size: 12px;
+    }
+    .title-slide .footer { display: none; }
+    .decision {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.3;
+      margin: 40px 0 36px;
+    }
+    .path {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px 20px;
+      border-left: 4px solid var(--teal);
+    }
+    .path.agent { border-left-color: var(--amber); }
+    .path h3 { margin: 0 0 8px; }
+    .path.agent h3 { color: var(--amber); }
+    .path:not(.agent) h3 { color: var(--teal); }
+    .path p { margin: 0; color: var(--muted); white-space: pre-line; }
+    .two-paths { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 800px) {
+      .slide { padding: 28px 22px 48px; }
+      .slide.title-slide, .cols, .cols.three, .steps, .two-paths { grid-template-columns: 1fr; }
+      .flow .arrow { display: none; }
+      .footer { left: 22px; right: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck">
+
+    <section class="slide title-slide">
+      <div class="title-left">
+        <div class="eyebrow">OPTIONS BRIEF</div>
+        <h1>How Agentforce talks to Cursor-built agents</h1>
+        <p>Decision deck for MuleSoft Agent Fabric wiring</p>
+        <p style="margin-top:10px">Neuraflash · Internal</p>
+      </div>
+      <div class="title-right">
+        <h2>Two viable paths</h2>
+        <div class="card">
+          <h3>Option A — Mule MCP app</h3>
+          <p>Register a MuleSoft MCP server in Agent Fabric. Agentforce keeps the reasoning loop.</p>
+        </div>
+        <div class="card">
+          <h3>Option B — Cursor BDK agent</h3>
+          <p>Expose a Cursor-built agent over MCP or A2A. Full model turns live in Cursor (self-hosted today).</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h1 class="slide-title">Agenda</h1>
+      <ul>
+        <li><strong>1. Context</strong> — What we built and the constraint we hit</li>
+        <li><strong>2. Decision</strong> — How Agentforce should reach Cursor-built capability</li>
+        <li><strong>3. Option A</strong> — Mule MCP Connector app (Fabric-native tools)</li>
+        <li><strong>4. Option B</strong> — Cursor BDK agent via MCP / A2A (agent reasoning)</li>
+        <li><strong>5. Compare</strong> — Intelligence, hosting, governance, effort</li>
+        <li><strong>6. Recommend</strong> — Path for now + what to watch</li>
+      </ul>
+      <div class="footer"><span>Neuraflash · Agentforce ↔ Cursor agents · Confidential</span><span>2 / 14</span></div>
+    </section>
+
+    <section class="slide">
+      <h1 class="slide-title">Project context</h1>
+      <div class="cols">
+        <div class="card" style="padding:22px">
+          <h3>What we set out to do</h3>
+          <ul>
+            <li>Give Agentforce access to internal knowledge (SKU, discount, SLA, competitive).</li>
+            <li>Route through Agent Fabric so the capability is registered and governable.</li>
+            <li>Prefer a Cursor-built agent for intelligent, cited answers.</li>
+          </ul>
+          <h3 style="margin-top:22px">What we learned</h3>
+          <ul>
+            <li>Cursor-managed hosting (v2) has no public MCP/A2A URL Fabric can register.</li>
+            <li>Hosted custom channels return empty 202s — A2A cards can’t be served sync.</li>
+            <li>A Mule MCP app can register today at <code>https://&lt;host&gt;/mcp</code>.</li>
+          </ul>
+        </div>
+        <div class="panel dark">
+          <h3>Already in the repo</h3>
+          <div class="item"><strong>mule-knowledge-mcp/</strong><span>Anypoint MCP server — ready to deploy &amp; register</span></div>
+          <div class="item"><strong>knowledge-fabric/</strong><span>Cursor BDK agent with tools + A2A channel</span></div>
+          <div class="item"><strong>mule-agent-fabric/</strong><span>Sample Agent Network wiring</span></div>
+        </div>
+      </div>
+      <div class="footer"><span>Neuraflash · Agentforce ↔ Cursor agents · Confidential</span><span>3 / 14</span></div>
+    </section>
+
+    <section class="slide">
+      <h1 class="slide-title">The decision in one sentence</h1>
+      <p class="decision">Should Agentforce call Cursor capability as tools through a Mule MCP server, or as a peer agent with its own model reasoning?</p>
+      <div class="two-paths">
+        <div class="path">
+          <h3>Tools path</h3>
+          <p>Agentforce (or Fabric broker) owns planning.
+Cursor/Mule surface returns evidence via MCP tools.</p>
+        </div>
+        <div class="path agent">
+          <h3>Agent path</h3>
+          <p>Cursor agent owns the turn: search → reason → cite.
+Fabric reaches it over MCP ask or A2A message/send.</p>
+        </div>
+      </div>
+      <div class="footer"><span>Neuraflash · Agentforce ↔ Cursor agents · Confidential</span><span>4 / 14</span></div>
+    </section>
+
+    <section class="slide">
+      <h1 class="slide-title">Option A — Mule MCP Connector app</h1>
+      <div class="eyebrow">RECOMMENDED FOR AGENT FABRIC TODAY</div>
+      <div class="flow">
+        <div class="step"><strong>Agentforce</strong><span>Topic / action</span></div>
+        <div class="arrow">→</div>
+        <div class="step"><strong>Agent Fabric</strong><span>Broker + registry</span></div>
+        <div class="arrow">→</div>
+        <div class="step"><strong>Mule MCP</strong><span>/mcp tools</span></div>
+        <div class="arrow">→</div>
+        <div class="step last"><strong>Knowledge</strong><span>Markdown corpus</span></div>
+      </div>
+      <ul>
+        <li>Deploy <code>mule-knowledge-mcp</code> to CloudHub 2.0 / RTF / Hybrid (NETTY required).</li>
+        <li>Register <code>https://&lt;host&gt;/mcp</code> in Exchange; wire Agent Network <code>kind: mcp</code>.</li>
+        <li>Tools: <code>search_knowledge</code>, <code>get_knowledge_document</code>, <code>list_knowledge_documents</code>.</li>
+        <li>Intelligence lives in Agentforce. MCP returns evidence only — no Cursor model turn.</li>
+        <li>Apply Anypoint policies before exposing to Fabric.</li>
+      </ul>
+      <div class="footer"><span>Neuraflash · Agentforce ↔ Cursor agents · Confidential</span><span>5 / 14</span></div>
+    </section>
+
+    <section class="slide">
+      <h1 class="slide-title">Option A — tradeoffs</h1>
+      <div class="cols">
+        <div class="panel">
+          <div class="head green">Strengths</div>
+          <div class="body"><ul>
+            <li>Fabric-native today — registerable MCP URL</li>
+            <li>Fits Anypoint ops model</li>
+            <li>Clear separation: tools vs Agentforce reasoning</li>
+            <li>No dependency on Cursor public MCP gateway</li>
+            <li>Lower runtime coupling to Cursor hosting</li>
+          </ul></div>
+        </div>
+        <div class="panel">
+          <div class="head amber">Tradeoffs</div>
+          <div class="body"><ul>
+            <li>No Cursor model reasoning on the knowledge turn</li>
+            <li>Reimplements tools in Mule/DataWeave</li>
+            <li>Corpus packaging is Mule-app-centric</li>
+            <li>Less agent personality / multi-step host logic</li>
+            <li>Eval / hillclimb loop stays outside BDK</li>
+          </ul></div>
+        </div>
+      </div>
+      <div class="footer"><span>Neuraflash · Agentforce ↔ Cursor agents · Confidential</span><span>6 / 14</span></div>
+    </section>
+
+    <section class="slide">
+      <h1 class="slide-title">Option B — Cursor BDK agent (MCP or A2A)</h1>
+      <div class="eyebrow warn">FULL AGENT REASONING · REQUIRES SELF-HOST (OR FUTURE V2 PUBLIC MCP)</div>
+      <div class="flow">
+        <div class="step"><strong>Agentforce</strong><span>Topic / action</span></div>
+        <div class="arrow">→</div>
+        <div class="step"><strong>Agent Fabric</strong><span>Broker + registry</span></div>
+        <div class="arrow">→</div>
+        <div class="step"><strong>Cursor BDK</strong><span>MCP ask / A2A</span></div>
+        <div class="arrow">→</div>
+        <div class="step last"><strong>Model turn</strong><span>search → cite</span></div>
+      </div>
+      <ul>
+        <li><code>knowledge-fabric</code> already has tools, cite skill, MCP (<code>/v1/mcp</code>), and A2A card + <code>message/send</code>.</li>
+        <li>MCP path: register public MCP URL; Fabric broker calls ask / tools with bearer auth.</li>
+        <li>A2A path: register <code>.../v1/channels/a2a/</code> so Fabric can fetch the agent card (self-host only).</li>
+        <li>Cursor-managed v2 works for playground / control-plane — not for Fabric registration today.</li>
+        <li>Not recommended: Mule facade that polls Cursor’s private control-plane APIs.</li>
+      </ul>
+      <div class="footer"><span>Neuraflash · Agentforce ↔ Cursor agents · Confidential</span><span>7 / 14</span></div>
+    </section>
+
+    <section class="slide">
+      <h1 class="slide-title">Option B — hosting reality check</h1>
+      <table>
+        <thead>
+          <tr><th>Hosting</th><th>Public MCP/A2A for Fabric?</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Cursor-managed (v2)</td><td>No — not yet</td><td>/v1/mcp 404s; custom channels return empty 202; no ship date for gateway</td></tr>
+          <tr><td>Self-host bdk serve</td><td>Yes — with public HTTPS</td><td>Behind Omni Gateway / reverse proxy; bearer token required</td></tr>
+          <tr><td>Laptop loopback</td><td>No</td><td>Agent Fabric cannot reach 127.0.0.1</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:24px;color:var(--muted)">Implication: choosing Option B for production Agent Fabric means operating a self-hosted BDK endpoint (or waiting for Cursor’s public MCP gateway on v2).</p>
+      <div class="footer"><span>Neuraflash · Agentforce ↔ Cursor agents · Confidential</span><span>8 / 14</span></div>
+    </section>
+
+    <section class="slide">
+      <h1 class="slide-title">Option B — tradeoffs</h1>
+      <div class="cols">
+        <div class="panel">
+          <div class="head green">Strengths</div>
+          <div class="body"><ul>
+            <li>Full Cursor model turn: search, reason, cite</li>
+            <li>BDK evals / hillclimb / playground loop</li>
+            <li>Same codebase can serve MCP and A2A</li>
+            <li>Closer to “call an agent,” not just tools</li>
+            <li>Future-proof if Cursor publishes MCP gateway</li>
+          </ul></div>
+        </div>
+        <div class="panel">
+          <div class="head amber">Tradeoffs</div>
+          <div class="body"><ul>
+            <li>Not Fabric-ready on Cursor hosting today</li>
+            <li>Self-hosting adds ops (TLS, auth, uptime)</li>
+            <li>A2A on hosted v2 blocked by empty 202s</li>
+            <li>Anypoint team may prefer a Mule package</li>
+            <li>Bridge-over-control-plane is a footgun</li>
+          </ul></div>
+        </div>
+      </div>
+      <div class="footer"><span>Neuraflash · Agentforce ↔ Cursor agents · Confidential</span><span>9 / 14</span></div>
+    </section>
+
+    <section class="slide">
+      <h1 class="slide-title">Side-by-side</h1>
+      <table>
+        <thead>
+          <tr><th></th><th>Option A — Mule MCP</th><th>Option B — Cursor BDK</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Who reasons?</td><td>Agentforce / Fabric broker</td><td>Cursor agent model turn</td></tr>
+          <tr><td>Protocol</td><td>MCP tools</td><td>MCP ask and/or A2A</td></tr>
+          <tr><td>Fabric-ready now?</td><td>Yes</td><td>Only if self-hosted</td></tr>
+          <tr><td>Anypoint package?</td><td>Yes</td><td>No (Node/BDK)</td></tr>
+          <tr><td>Governance</td><td>Exchange + Anypoint policies</td><td>Gateway + bearer; manual register</td></tr>
+          <tr><td>Best when</td><td>Need production Fabric path now</td><td>Need agent-quality answers / evals</td></tr>
+        </tbody>
+      </table>
+      <div class="footer"><span>Neuraflash · Agentforce ↔ Cursor agents · Confidential</span><span>10 / 14</span></div>
+    </section>
+
+    <section class="slide">
+      <h1 class="slide-title">Will MCP be as “intelligent” as the agent?</h1>
+      <div class="quote">MCP gives tools. An agent adds reasoning. Same evidence can look “smart” or “dumb” depending on who plans the calls.</div>
+      <div class="cols three">
+        <div class="card"><h3>Option A answer quality</h3><p>Depends on Agentforce topic instructions + tool allowlisting. Strong if the topic forces search → get_document → cite.</p></div>
+        <div class="card"><h3>Option B answer quality</h3><p>Cursor instructions + cite skill + evals drive consistency. Better for multi-step retrieval and refusal when knowledge is missing.</p></div>
+        <div class="card"><h3>Practical takeaway</h3><p>If Agentforce prompt discipline is solid, Option A is enough. If you need BDK-grade behavior, choose Option B and self-host.</p></div>
+      </div>
+      <div class="footer"><span>Neuraflash · Agentforce ↔ Cursor agents · Confidential</span><span>11 / 14</span></div>
+    </section>
+
+    <section class="slide">
+      <h1 class="slide-title">Recommendation</h1>
+      <div class="hero">
+        <h2>Ship Option A now for Agentforce ↔ Fabric.</h2>
+        <p>Keep Option B as the Cursor-native path: continue knowledge-fabric for evals, and self-host when you need Fabric to call a full Cursor agent.</p>
+      </div>
+      <div class="steps">
+        <div class="step-card"><div class="n">1</div><div>Deploy mule-knowledge-mcp to CloudHub 2.0 / RTF with NETTY</div></div>
+        <div class="step-card"><div class="n">2</div><div>Register /mcp in Exchange; wire agent-network.yaml broker</div></div>
+        <div class="step-card"><div class="n">3</div><div>Point Agentforce topic at the Fabric broker; enforce cite-only instructions</div></div>
+        <div class="step-card"><div class="n">4</div><div>Optionally self-host knowledge-fabric later for agent-grade turns</div></div>
+      </div>
+      <div class="footer"><span>Neuraflash · Agentforce ↔ Cursor agents · Confidential</span><span>12 / 14</span></div>
+    </section>
+
+    <section class="slide">
+      <h1 class="slide-title">Open questions for the room</h1>
+      <div class="q-row"><strong>Where must intelligence live?</strong><span>Is Agentforce topic quality enough, or do we need Cursor’s model loop in the critical path?</span></div>
+      <div class="q-row"><strong>Who operates the endpoint?</strong><span>Anypoint team (Option A) vs team willing to self-host BDK (Option B)?</span></div>
+      <div class="q-row"><strong>Timeline vs purity?</strong><span>Do we need Fabric registration this sprint, or can we wait on Cursor’s v2 MCP gateway?</span></div>
+      <div class="q-row"><strong>Corpus ownership?</strong><span>Who updates knowledge articles — Mule package releases vs Cursor agent knowledge/ folder?</span></div>
+      <div class="footer"><span>Neuraflash · Agentforce ↔ Cursor agents · Confidential</span><span>13 / 14</span></div>
+    </section>
+
+    <section class="slide">
+      <h1 class="slide-title">Appendix — key references</h1>
+      <ul>
+        <li><strong>Repo paths:</strong> mule-knowledge-mcp/ · knowledge-fabric/ · mule-agent-fabric/</li>
+        <li><strong>Prior build:</strong> Cursor agent “Cursor internal knowledge agent” — deployed knowledge-fabric on NeuraFlash team (v2).</li>
+        <li><strong>Constraint:</strong> Cursor-managed architecture v2 does not expose a registerable public MCP URL for Agent Fabric.</li>
+        <li><strong>Salesforce framing:</strong> Tool surface → MCP; peer agent that owns planning → A2A.</li>
+        <li><strong>Agentforce note:</strong> Not natively A2A — Fabric A2A Bridge or MCP registration is the usual path.</li>
+        <li><strong>Avoid:</strong> Treating Bruno/Postman control-plane curls as an Agent Fabric integration.</li>
+        <li><strong>Style note:</strong> Reference Google Slides deck was inaccessible (auth). Align visuals once shared.</li>
+      </ul>
+      <div class="footer"><span>Neuraflash · Agentforce ↔ Cursor agents · Confidential</span><span>14 / 14</span></div>
+    </section>
+
+  </div>
+</body>
+</html>

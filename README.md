@@ -10,3 +10,5 @@ to search internal knowledge through **MuleSoft Agent Fabric**:
    Cursor-hosted or self-hosted agent with model reasoning. Self-host if you need a public MCP/A2A URL; Cursor-managed v2 deploy does not yet expose one for Agent Fabric.
 
 Sample Agent Network wiring: [`mule-agent-fabric/`](mule-agent-fabric/README.md).
+
+Decision deck comparing the two paths: [`presentations/agentforce-cursor-options/`](presentations/agentforce-cursor-options/README.md).
