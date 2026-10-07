@@ -1,0 +1,19 @@
+meta {
+  name: 04 Get session runs
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/internal/agentsdk/deployments/{{slug}}/sessions/{{sessionId}}/runs?teamId={{teamId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{cursorApiKey}}
+}
+
+docs {
+  Hosted execution status and log lines for the session.
+}
